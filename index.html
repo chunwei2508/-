@@ -1,170 +1,573 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>股票投资 Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>股票买卖记录计算器</title>
+
 <style>
-body{margin:0;background:#f6f1e8;color:#2f281f;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial}
-.app{max-width:1050px;margin:auto;padding:18px}
-h1{font-size:26px;margin:8px 0 4px}.sub{color:#776b5e;font-size:14px;margin-bottom:16px}
-.stats,.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.grid{grid-template-columns:1.3fr .9fr}
-.card,.stat,.record{background:#fffaf3;border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 6px 20px #0001}
-.stat{background:#eadcc8}.stat small{color:#6e6258}.stat b{display:block;font-size:24px;margin-top:6px}
-input,select{width:100%;box-sizing:border-box;padding:12px;border:1px solid #d8c7ad;border-radius:12px;font-size:15px;margin:6px 0 12px;background:white}
-label{font-weight:700;font-size:14px}
-.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-button{border:0;border-radius:12px;padding:11px 15px;font-weight:800}
-.primary{background:#9b6b2e;color:white}.secondary{background:#eadcc8;color:#5a3d1d}.danger{background:white;color:#d11;border:1px solid #e55}
-.row{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;border-bottom:1px solid #eadfce;padding:13px 0}
-.icon{background:#f0e3d1;color:#8a5c22;border-radius:12px;width:42px;height:42px;display:flex;align-items:center;justify-content:center}
-.row small{color:#776b5e}.row b{font-size:18px}.pill{background:#f0e3d1;border-radius:99px;padding:7px 11px;color:#8a5c22;font-weight:800}
-.box{background:#f0e3d1;border-radius:16px;padding:15px;margin-top:14px}.box b{font-size:22px}
-.records-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
-.stock{font-size:22px;font-weight:900}.green{color:#118042;font-weight:900}.red{color:#c62828;font-weight:900}
-.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.info{background:#fff7ec;border-radius:14px;padding:12px}.info small{color:#776b5e}
-.sell{display:grid;grid-template-columns:1fr 1fr auto auto;gap:10px;align-items:end;border-top:1px solid #eadfce;margin-top:12px;padding-top:12px}
-@media(max-width:800px){.stats,.grid,.form,.info-grid,.sell{grid-template-columns:1fr}.app{padding:14px}h1{font-size:24px}}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  background:#f6f1e8;
+  color:#2f2a24;
+}
+.wrap{
+  max-width:1000px;
+  margin:auto;
+  padding:18px;
+}
+h1{
+  font-size:24px;
+  margin:10px 0 4px;
+}
+.sub{
+  color:#7a6f62;
+  font-size:14px;
+  margin-bottom:18px;
+}
+.card{
+  background:#fffaf1;
+  border:1px solid #e6dccb;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:16px;
+  box-shadow:0 8px 24px rgba(90,70,40,.06);
+}
+label{
+  font-size:13px;
+  color:#6c6258;
+  margin-bottom:6px;
+  display:block;
+}
+input,select{
+  width:100%;
+  box-sizing:border-box;
+  padding:12px;
+  border:1px solid #d8cbb8;
+  border-radius:12px;
+  background:#fff;
+  font-size:15px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.grid3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+button{
+  border:0;
+  border-radius:14px;
+  padding:10px 12px;
+  font-size:14px;
+  font-weight:600;
+  background:#8b6f47;
+  color:white;
+  cursor:pointer;
+}
+button.secondary{
+  background:#d8c7ab;
+  color:#3b3328;
+}
+button.danger{
+  background:#b45a4f;
+}
+.result{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-top:14px;
+}
+.box{
+  background:#f4ead9;
+  border-radius:14px;
+  padding:12px;
+}
+.box small{
+  display:block;
+  color:#766b5d;
+}
+.box b{
+  font-size:18px;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+th,td{
+  padding:10px;
+  border-bottom:1px solid #eadfce;
+  text-align:left;
+  vertical-align:top;
+}
+th{
+  color:#6d6257;
+}
+.profit{
+  color:#16824a;
+  font-weight:700;
+}
+.loss{
+  color:#b23b32;
+  font-weight:700;
+}
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.sell-input{
+  min-width:100px;
+  margin-bottom:6px;
+  padding:8px;
+  font-size:13px;
+}
+@media(max-width:700px){
+  .grid,.grid3,.result{
+    grid-template-columns:1fr;
+  }
+  table{
+    font-size:12px;
+  }
+  th,td{
+    padding:8px;
+  }
+}
 </style>
 </head>
+
 <body>
-<div class="app">
-<h1>📈 股票投资 Dashboard</h1>
-<div class="sub">记录买卖、手续费、净收入、盈亏和持有天数</div>
+<div class="wrap">
 
-<div class="stats">
-<div class="stat"><small>总投资金额</small><b id="sInvest">RM 0.00</b></div>
-<div class="stat"><small>持仓股票</small><b id="sHold">0 只</b></div>
-<div class="stat"><small>已实现盈亏</small><b id="sProfit">RM 0.00</b></div>
-</div>
+  <h1>股票买卖记录计算器</h1>
+  <div class="sub">记录马股买卖、手续费、净收入、盈亏和持有天数。资料只保存在你的手机/浏览器。</div>
 
-<div class="grid">
-<div class="card">
-<h2>新增买入记录</h2>
-<div class="form">
-<div><label>股票代码/名称</label><input id="stock" placeholder="MAYBANK" oninput="preview()"></div>
-<div><label>买入价 RM</label><input id="buyPrice" type="number" step="0.001" placeholder="10.440" oninput="preview()"></div>
-<div><label>买入日期</label><input id="buyDate" type="date" onchange="preview()"></div>
-<div><label>买入股数</label><input id="qty" type="number" placeholder="900" oninput="preview()"></div>
-<div><label>卖出价 RM（可空）</label><input id="sellPrice" type="number" step="0.001" oninput="preview()"></div>
-<div><label>卖出日期（可空）</label><input id="sellDate" type="date" onchange="preview()"></div>
-</div>
-<button class="primary" onclick="saveRecord()">保存记录</button>
-<button class="secondary" onclick="clearForm()">清空</button>
-</div>
+  <div class="card">
+    <h3>手续费设置</h3>
 
-<div class="card">
-<h2>实时计算</h2>
-<div id="preview"></div>
-</div>
-</div>
+    <div class="grid3">
+      <div>
+        <label>Brokerage %</label>
+        <input id="brokerRate" type="number" step="0.001" value="0.08">
+      </div>
 
-<div class="card">
-<div class="records-head">
-<h2>我的交易记录</h2>
-<button class="danger" onclick="clearAll()">删除全部</button>
-</div>
-<div id="records"></div>
-</div>
+      <div>
+        <label>最低 Brokerage RM</label>
+        <input id="minBroker" type="number" step="0.01" value="8">
+      </div>
+
+      <div>
+        <label>SST %</label>
+        <input id="sstRate" type="number" step="0.01" value="8">
+      </div>
+
+      <div>
+        <label>Clearing Fee %</label>
+        <input id="clearRate" type="number" step="0.001" value="0.03">
+      </div>
+
+      <div>
+        <label>Clearing Fee 上限 RM</label>
+        <input id="clearCap" type="number" step="0.01" value="1000">
+      </div>
+
+      <div>
+        <label>Stamp Duty 上限 RM</label>
+        <input id="stampCap" type="number" step="1" value="1000">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>新增买入记录</h3>
+
+    <div class="grid3">
+      <div>
+        <label>股票代码 / 名称</label>
+        <input id="stock" placeholder="例：MAYBANK">
+      </div>
+
+      <div>
+        <label>买入日期</label>
+        <input id="buyDate" type="date">
+      </div>
+
+      <div>
+        <label>状态</label>
+        <select id="status">
+          <option value="holding">还持有</option>
+          <option value="sold">已卖出</option>
+        </select>
+      </div>
+
+      <div>
+        <label>买入股数</label>
+        <input id="qty" type="number" placeholder="例：1000">
+      </div>
+
+      <div>
+        <label>买入价 RM</label>
+        <input id="buyPrice" type="number" step="0.001" placeholder="例：1.250">
+      </div>
+
+      <div>
+        <label>卖出价 RM，可空</label>
+        <input id="sellPrice" type="number" step="0.001" placeholder="例：1.380">
+      </div>
+
+      <div>
+        <label>卖出日期，可空</label>
+        <input id="sellDate" type="date">
+      </div>
+    </div>
+
+    <div class="actions" style="margin-top:14px">
+      <button onclick="calculate()">计算</button>
+      <button onclick="saveRecord()">保存记录</button>
+      <button class="secondary" onclick="clearForm()">清空输入</button>
+    </div>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <div class="card">
+    <div class="actions" style="justify-content:space-between">
+      <h3>保存记录</h3>
+      <button class="danger" onclick="clearAll()">删除全部记录</button>
+    </div>
+
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>股票</th>
+            <th>买入资料</th>
+            <th>卖出资料</th>
+            <th>持有天数</th>
+            <th>实际成本</th>
+            <th>净收入</th>
+            <th>盈亏</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="records"></tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 <script>
-let records=JSON.parse(localStorage.stockRecordsV3||"[]");
-buyDate.valueAsDate=new Date();
+let records = JSON.parse(localStorage.getItem("stockRecords") || "[]");
 
-function money(n){return "RM "+Number(n||0).toLocaleString("en-MY",{minimumFractionDigits:2,maximumFractionDigits:2})}
-function days(a,b){let s=new Date(a),e=b?new Date(b):new Date();s.setHours(0,0,0,0);e.setHours(0,0,0,0);return Math.max(0,Math.floor((e-s)/86400000))}
-function fee(v){let brokerage=Math.max(v*0.0008,8),clearing=v*0.0003,stamp=Math.ceil(v/1000),sst=brokerage*.08;return brokerage+clearing+stamp+sst}
-function data(){
-return{ id:Date.now(), stock:stock.value.trim().toUpperCase(), buyDate:buyDate.value, qty:+qty.value, buyPrice:+buyPrice.value, sellPrice:+sellPrice.value, sellDate:sellDate.value }
+document.getElementById("buyDate").valueAsDate = new Date();
+
+function money(n){
+  return "RM " + Number(n || 0).toFixed(2);
 }
-function calc(r){
-let buyVal=r.qty*r.buyPrice,buyFee=fee(buyVal),cost=buyVal+buyFee;
-let income=0,profit=null,roi=null,sellFee=0;
-if(r.sellPrice>0){let sellVal=r.qty*r.sellPrice;sellFee=fee(sellVal);income=sellVal-sellFee;profit=income-cost;roi=profit/cost*100}
-return{buyVal,buyFee,cost,sellFee,income,profit,roi,days:days(r.buyDate,r.sellDate)}
+
+function daysBetween(start, end){
+  if(!start) return 0;
+
+  const s = new Date(start);
+  const e = end ? new Date(end) : new Date();
+
+  s.setHours(0,0,0,0);
+  e.setHours(0,0,0,0);
+
+  return Math.max(0, Math.floor((e - s) / 86400000));
 }
-function preview(){
-let r=data(),c=calc(r),name=r.stock||"MAYBANK";
-document.getElementById("preview").innerHTML=`
-<div class="row"><div class="icon">💼</div><div><small>股票</small><br><b>${name}</b></div><div class="pill">${r.sellPrice>0?"已卖出":"还持有"}</div></div>
-<div class="row"><div class="icon">📅</div><div><small>日期</small><br><b>${r.buyDate||"-"}</b></div><div></div></div>
-<div class="row"><div class="icon">📊</div><div><small>股数</small><br><b>${r.qty||0}</b></div><div></div></div>
-<div class="row"><div class="icon">🏷️</div><div><small>买入价</small><br><b>RM ${(r.buyPrice||0).toFixed(3)}</b></div><div></div></div>
-<div class="row"><div class="icon">🧾</div><div><small>买入费用</small><br><b>${money(c.buyFee)}</b></div><div></div></div>
-<div class="box"><small>总买入金额（含费用）</small><br><b>${money(c.cost)}</b></div>
-${r.sellPrice>0?`<div class="box"><small>卖出净收入</small><br><b>${money(c.income)}</b><br><small>盈亏</small><br><b class="${c.profit>=0?'green':'red'}">${money(c.profit)} (${c.roi.toFixed(2)}%)</b></div>`:""}
-`
+
+function getSettings(){
+  return {
+    brokerRate: Number(document.getElementById("brokerRate").value) / 100,
+    minBroker: Number(document.getElementById("minBroker").value),
+    sstRate: Number(document.getElementById("sstRate").value) / 100,
+    clearRate: Number(document.getElementById("clearRate").value) / 100,
+    clearCap: Number(document.getElementById("clearCap").value),
+    stampCap: Number(document.getElementById("stampCap").value)
+  };
 }
+
+function feeBreakdown(value){
+  const s = getSettings();
+
+  const brokerage = Math.max(value * s.brokerRate, s.minBroker);
+  const sst = brokerage * s.sstRate;
+  const clearing = Math.min(value * s.clearRate, s.clearCap);
+
+  // Stamp Duty：每 RM1000 或不足 RM1000 算 RM1，上限可自行调整
+  const stamp = Math.min(Math.ceil(value / 1000), s.stampCap);
+
+  return {
+    value,
+    brokerage,
+    sst,
+    clearing,
+    stamp,
+    totalFee: brokerage + sst + clearing + stamp
+  };
+}
+
+function getFormData(){
+  return {
+    id: Date.now(),
+    stock: document.getElementById("stock").value.trim().toUpperCase(),
+    buyDate: document.getElementById("buyDate").value,
+    status: document.getElementById("status").value,
+    qty: Number(document.getElementById("qty").value),
+    buyPrice: Number(document.getElementById("buyPrice").value),
+    sellPrice: Number(document.getElementById("sellPrice").value),
+    sellDate: document.getElementById("sellDate").value
+  };
+}
+
+function compute(data){
+  const buyValue = data.qty * data.buyPrice;
+  const buyFee = feeBreakdown(buyValue);
+  const totalCost = buyValue + buyFee.totalFee;
+
+  let sellValue = 0;
+  let sellFee = null;
+  let netSell = 0;
+  let profit = null;
+
+  if(data.sellPrice > 0){
+    sellValue = data.qty * data.sellPrice;
+    sellFee = feeBreakdown(sellValue);
+    netSell = sellValue - sellFee.totalFee;
+    profit = netSell - totalCost;
+  }
+
+  return {
+    buyValue,
+    buyFee,
+    totalCost,
+    sellValue,
+    sellFee,
+    netSell,
+    profit,
+    holdingDays: daysBetween(data.buyDate, data.sellDate)
+  };
+}
+
+function calculate(){
+  const data = getFormData();
+
+  if(!data.stock || !data.buyDate || !data.qty || !data.buyPrice){
+    alert("请填写股票、买入日期、股数和买入价");
+    return null;
+  }
+
+  const c = compute(data);
+
+  const profitHtml = c.profit === null
+    ? `<b>-</b>`
+    : `<b class="${c.profit >= 0 ? 'profit':'loss'}">${money(c.profit)}</b>`;
+
+  document.getElementById("result").innerHTML = `
+    <div class="box">
+      <small>买入成交值</small>
+      <b>${money(c.buyValue)}</b>
+    </div>
+
+    <div class="box">
+      <small>买入总手续费</small>
+      <b>${money(c.buyFee.totalFee)}</b>
+    </div>
+
+    <div class="box">
+      <small>实际买入成本</small>
+      <b>${money(c.totalCost)}</b>
+    </div>
+
+    <div class="box">
+      <small>持有天数</small>
+      <b>${c.holdingDays} 天</b>
+    </div>
+
+    <div class="box">
+      <small>卖出净收入</small>
+      <b>${data.sellPrice ? money(c.netSell) : "-"}</b>
+    </div>
+
+    <div class="box">
+      <small>扣费后盈亏</small>
+      ${profitHtml}
+    </div>
+
+    <div class="box">
+      <small>买入费用明细</small>
+      Brokerage ${money(c.buyFee.brokerage)}<br>
+      SST ${money(c.buyFee.sst)}<br>
+      Clearing ${money(c.buyFee.clearing)}<br>
+      Stamp ${money(c.buyFee.stamp)}
+    </div>
+
+    <div class="box">
+      <small>卖出费用明细</small>
+      ${c.sellFee ? `
+        Brokerage ${money(c.sellFee.brokerage)}<br>
+        SST ${money(c.sellFee.sst)}<br>
+        Clearing ${money(c.sellFee.clearing)}<br>
+        Stamp ${money(c.sellFee.stamp)}
+      ` : "还没有卖出"}
+    </div>
+  `;
+
+  return data;
+}
+
 function saveRecord(){
-let r=data();
-if(!r.stock||!r.buyDate||!r.qty||!r.buyPrice){alert("请填写股票、日期、股数和买入价");return}
-if(r.sellPrice>0&&!r.sellDate)r.sellDate=new Date().toISOString().slice(0,10);
-records.unshift(r);persist();clearForm()
+  const data = calculate();
+  if(!data) return;
+
+  records.push(data);
+  localStorage.setItem("stockRecords", JSON.stringify(records));
+
+  renderRecords();
+  clearForm(false);
 }
-function clearForm(){stock.value="";qty.value="";buyPrice.value="";sellPrice.value="";sellDate.value="";buyDate.valueAsDate=new Date();preview()}
-function persist(){localStorage.stockRecordsV3=JSON.stringify(records);render()}
+
 function updateSell(id){
-let r=records.find(x=>x.id==id),p=+document.getElementById("sp"+id).value,d=document.getElementById("sd"+id).value;
-if(!p){alert("请输入卖出价");return}r.sellPrice=p;r.sellDate=d||new Date().toISOString().slice(0,10);persist()
+  const record = records.find(r => r.id === id);
+  if(!record) return;
+
+  const sellPrice = Number(document.getElementById("sellPrice_" + id).value);
+  const sellDate = document.getElementById("sellDate_" + id).value;
+
+  if(!sellPrice || sellPrice <= 0){
+    alert("请输入正确的卖出价");
+    return;
+  }
+
+  record.sellPrice = sellPrice;
+  record.sellDate = sellDate || new Date().toISOString().slice(0,10);
+  record.status = "sold";
+
+  localStorage.setItem("stockRecords", JSON.stringify(records));
+  renderRecords();
 }
-function undo(id){let r=records.find(x=>x.id==id);r.sellPrice=0;r.sellDate="";persist()}
-function render(){
-function del(id){
 
-  records = records.filter(x => x.id != id);
+function undoSell(id){
+  const record = records.find(r => r.id === id);
+  if(!record) return;
 
-  localStorage.setItem(
-    "stockRecordsV3",
-    JSON.stringify(records)
-  );
+  record.sellPrice = 0;
+  record.sellDate = "";
+  record.status = "holding";
 
-  render();
-  preview();
-
-  alert("记录已删除");
+  localStorage.setItem("stockRecords", JSON.stringify(records));
+  renderRecords();
 }
 
+function deleteRecord(id){
+  records = records.filter(r => r.id !== id);
+  localStorage.setItem("stockRecords", JSON.stringify(records));
+  renderRecords();
+}
 
 function clearAll(){
-
-  records = [];
-
-  localStorage.removeItem("stockRecordsV3");
-
-  render();
-  preview();
-
-  document.getElementById("sInvest").innerHTML = "RM 0.00";
-  document.getElementById("sHold").innerHTML = "0 只";
-  document.getElementById("sProfit").innerHTML = "RM 0.00";
-
-  alert("全部记录已删除");
-}let invest=0,hold=0,real=0;
-records.forEach(r=>{let c=calc(r);invest+=c.cost;if(r.sellPrice>0)real+=c.profit;else hold++});
-sInvest.innerHTML=money(invest);sHold.innerHTML=hold+" 只";sProfit.innerHTML=money(real);sProfit.className=real>=0?"green":"red";
-records.innerHTML=records.length?records.map(r=>{
-let c=calc(r),sold=r.sellPrice>0;
-return `<div class="record">
-<div class="records-head"><div><div class="stock">${r.stock}</div><div class="${sold?'red':'green'}">${sold?'● 已卖出':'● 还持有'}</div></div><button class="danger" onclick="del(${r.id})">删除</button></div>
-<div class="info-grid">
-<div class="info"><small>买入资料</small><br><b>${r.buyDate}</b><br>${r.qty} 股<br>RM ${r.buyPrice.toFixed(3)}</div>
-<div class="info"><small>持有天数</small><br><b>${c.days} 天</b></div>
-<div class="info"><small>实际成本</small><br><b>${money(c.cost)}</b></div>
-<div class="info"><small>买入费用</small><br><b>${money(c.buyFee)}</b></div>
-<div class="info"><small>净收入</small><br><b>${sold?money(c.income):"-"}</b></div>
-<div class="info"><small>盈亏</small><br><b class="${c.profit>=0?'green':'red'}">${sold?money(c.profit)+" ("+c.roi.toFixed(2)+"%)":"-"}</b></div>
-</div>
-<div class="sell">
-<div><label>卖出价 RM</label><input id="sp${r.id}" type="number" step="0.001" value="${r.sellPrice||""}"></div>
-<div><label>卖出日期</label><input id="sd${r.id}" type="date" value="${r.sellDate||""}"></div>
-<button class="primary" onclick="updateSell(${r.id})">更新卖出</button>
-<button class="secondary" onclick="undo(${r.id})">改回持有</button>
-</div>
-</div>`
-}).join(""):"<p>还没有交易记录</p>"
+  if(confirm("确定删除全部记录吗？")){
+    records = [];
+    localStorage.removeItem("stockRecords");
+    renderRecords();
+  }
 }
-preview();render();
+
+function clearForm(clearResult = true){
+  document.getElementById("stock").value = "";
+  document.getElementById("qty").value = "";
+  document.getElementById("buyPrice").value = "";
+  document.getElementById("sellPrice").value = "";
+  document.getElementById("sellDate").value = "";
+  document.getElementById("status").value = "holding";
+  document.getElementById("buyDate").valueAsDate = new Date();
+
+  if(clearResult){
+    document.getElementById("result").innerHTML = "";
+  }
+}
+
+function renderRecords(){
+  const tbody = document.getElementById("records");
+
+  records.sort((a,b)=>{
+    const da = daysBetween(a.buyDate, a.sellDate);
+    const db = daysBetween(b.buyDate, b.sellDate);
+    return db - da;
+  });
+
+  tbody.innerHTML = records.map(r=>{
+    const c = compute(r);
+
+    const profitText = c.profit === null ? "-" : money(c.profit);
+    const profitClass = c.profit === null ? "" : (c.profit >= 0 ? "profit" : "loss");
+
+    return `
+      <tr>
+        <td>
+          <b>${r.stock}</b><br>
+          ${r.status === "sold" ? "已卖出" : "还持有"}
+        </td>
+
+        <td>
+          日期：${r.buyDate}<br>
+          股数：${r.qty}<br>
+          买入价：RM ${r.buyPrice.toFixed(3)}<br>
+          买入费用：${money(c.buyFee.totalFee)}
+        </td>
+
+        <td>
+          <input 
+            id="sellPrice_${r.id}" 
+            class="sell-input"
+            type="number" 
+            step="0.001" 
+            placeholder="卖出价"
+            value="${r.sellPrice || ""}"
+          >
+
+          <input 
+            id="sellDate_${r.id}" 
+            class="sell-input"
+            type="date" 
+            value="${r.sellDate || ""}"
+          >
+
+          <br>
+
+          <button onclick="updateSell(${r.id})">更新卖出</button>
+          <button class="secondary" onclick="undoSell(${r.id})">改回持有</button>
+
+          <br><br>
+
+          ${r.sellPrice ? `
+            卖出成交值：${money(c.sellValue)}<br>
+            卖出费用：${money(c.sellFee.totalFee)}
+          ` : "还没有卖出"}
+        </td>
+
+        <td>${c.holdingDays} 天</td>
+        <td>${money(c.totalCost)}</td>
+        <td>${r.sellPrice ? money(c.netSell) : "-"}</td>
+        <td class="${profitClass}">${profitText}</td>
+
+        <td>
+          <button class="danger" onclick="deleteRecord(${r.id})">删除</button>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+renderRecords();
 </script>
+
 </body>
 </html>
