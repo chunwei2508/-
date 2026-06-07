@@ -109,10 +109,38 @@ let r=records.find(x=>x.id==id),p=+document.getElementById("sp"+id).value,d=docu
 if(!p){alert("请输入卖出价");return}r.sellPrice=p;r.sellDate=d||new Date().toISOString().slice(0,10);persist()
 }
 function undo(id){let r=records.find(x=>x.id==id);r.sellPrice=0;r.sellDate="";persist()}
-function del(id){if(confirm("删除这条记录？")){records=records.filter(x=>x.id!=id);persist()}}
-function clearAll(){if(confirm("确定删除全部？")){records=[];persist()}}
 function render(){
-let invest=0,hold=0,real=0;
+function del(id){
+
+  records = records.filter(x => x.id != id);
+
+  localStorage.setItem(
+    "stockRecordsV3",
+    JSON.stringify(records)
+  );
+
+  render();
+  preview();
+
+  alert("记录已删除");
+}
+
+
+function clearAll(){
+
+  records = [];
+
+  localStorage.removeItem("stockRecordsV3");
+
+  render();
+  preview();
+
+  document.getElementById("sInvest").innerHTML = "RM 0.00";
+  document.getElementById("sHold").innerHTML = "0 只";
+  document.getElementById("sProfit").innerHTML = "RM 0.00";
+
+  alert("全部记录已删除");
+}let invest=0,hold=0,real=0;
 records.forEach(r=>{let c=calc(r);invest+=c.cost;if(r.sellPrice>0)real+=c.profit;else hold++});
 sInvest.innerHTML=money(invest);sHold.innerHTML=hold+" 只";sProfit.innerHTML=money(real);sProfit.className=real>=0?"green":"red";
 records.innerHTML=records.length?records.map(r=>{
